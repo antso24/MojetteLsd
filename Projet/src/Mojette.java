@@ -1,24 +1,28 @@
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 
 public class Mojette {
-private int nombreBin;
-private Map<Integer,Integer> bins;
-private int binMinimum;
-private int binMax;
+private int nombreBin; // nombre de bins
+private Map<Integer,Integer> bins; // hash map où la clé est le numéro du bin, l'autre entier la valeur du bin
+private int plusPetitNumBin; // le plus petit numéro de bins
+private int binMax; // le plus grand bin
+private Vector<Integer> abscisseBin = new Vector<Integer>(); // contient les abscisses des points passant par le plus grand bin
+private Vector<Integer> ordonneeBin = new Vector<Integer>(); // contient les ordonnées des points passant par le plus grand bin
 private Fraction fraction;
+private int numeroBinMax; //numéro du bin le plus élevé
 Pixel image;
-final int seuil = 25;
 
-Mojette(Pixel image, Fraction fraction){
+Mojette(Pixel image, Fraction fraction){ // on effectue la projection sur une image et dans une direction
 	this.image = image;
 	this.fraction = fraction;
 	calculeNombreDeBin();
 	bins = new HashMap<Integer, Integer>();
-	calculeBinMinimum();
+	calculePlusPetitNumBin();
 	projectionMojette();
 	plusGrandBin();
-	admissible();
+	calculCoordonneeBinMax();
+	updateCoordonneesDroites();
 	//afficheInformations();
 }
 
@@ -33,17 +37,17 @@ public void calculeNombreDeBin(){
 	nombreBin=result;			
 }
 
-public void calculeBinMinimum(){
+public void calculePlusPetitNumBin(){ // calcule le plus petit numéro de bin
 	int min = 10000;
 	for(int k=0;k<image.getLength();k++)
 		for(int l=0;l<image.getHeight();l++)
 			if(-fraction.getNum()*k+fraction.getDen()*l<min)
 				min=-fraction.getNum()*k+fraction.getDen()*l;
-	binMinimum= min;
+	plusPetitNumBin= min;
 }
 
-public void projectionMojette(){
-	for(int i=binMinimum;i<binMinimum+nombreBin;i++){
+public void projectionMojette(){ // calcule les bins de la direction 
+	for(int i=plusPetitNumBin;i<plusPetitNumBin+nombreBin;i++){
 		int valeur = 0;
 		for(int k=0;k<image.getLength();k++)
 			for(int l=0;l<image.getHeight();l++)
@@ -54,19 +58,30 @@ public void projectionMojette(){
 		}
 }
 
-public void plusGrandBin(){
-	int max = -1;
-	for (int i=binMinimum; i<binMinimum+nombreBin;i++){
-		if(bins.get(i)>max)
-			max = bins.get(i);
-	}
-	binMax = max;
+public void calculCoordonneeBinMax(){ // calcule les coordonnées des points passant par le plus grand bin	
+	for(int k=0;k<image.getLength();k++)
+		for(int l=0;l<image.getHeight();l++)
+			if(numeroBinMax == -fraction.getNum()*k+fraction.getDen()*l){				
+				abscisseBin.add(k);
+				ordonneeBin.add(l);
+				}
 }
 
-public void admissible(){
-	if (binMax>seuil)
-		fraction.setAdmissible();
-	else;		
+public void updateCoordonneesDroites(){ 
+	fraction.setVecteurX(abscisseBin);
+	fraction.setVecteurY(ordonneeBin);
+}
+
+public void plusGrandBin(){ // on calcule le plus grand bin et le numéro de ce bin
+	int max = -1;
+	int num = -1;
+	for (int i=plusPetitNumBin; i<plusPetitNumBin+nombreBin;i++){
+		if(bins.get(i)>max){
+			max = bins.get(i);
+			num = i;}
+	}
+	numeroBinMax = num;
+	binMax = max;
 }
 
 public Map<Integer,Integer> getBins(){
@@ -74,7 +89,7 @@ public Map<Integer,Integer> getBins(){
 }
 
 public int getMinimum(){
-	return binMinimum;
+	return plusPetitNumBin;
 }
 
 public Fraction getFraction(){
@@ -85,16 +100,15 @@ public int getBinMax(){
 	return binMax;
 }
 
-public void afficheInformations(){	
-	if (fraction.admissible){
-		System.out.print("Dans la direction ");
-		fraction.affiche();
-		System.out.println("   Le plus grand bin vaut " +binMax);	
-		System.out.println("  La fraction est interessante");}
-	//else
-		//System.out.println("  La fraction est inutile");
-	//for(int i=binMinimum;i<binMinimum+nombreBin;i++)
-		//System.out.println("   Le bin numero "+i+ " est égal à " +bins.get(i));
+public void afficheInformations(){	// affiche les coordonnées des deux points extremes de la fraction 
+	System.out.print("Dans la direction ");
+	fraction.affiche();
+	System.out.println("   La droite du pic passe par le point ( " +fraction.getVecteurX().firstElement()+ " , " +fraction.getVecteurY().firstElement()+ " ) "
+			+ "et par le point ( " +fraction.getVecteurX().lastElement()+ " , " +fraction.getVecteurY().lastElement()+ " ) ");
+
+	for(int i=plusPetitNumBin;i<plusPetitNumBin+nombreBin;i++)
+		System.out.println("   Le bin numero "+i+ " est égal à " +bins.get(i));	
+	
 		
 }
 

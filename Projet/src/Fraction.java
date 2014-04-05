@@ -3,24 +3,9 @@ import java.util.Vector;
 public class Fraction implements Comparable {
 	private int numerateur;
 	private int denominateur;
-	private int marqueur = 0;
-	boolean admissible = false;
-	
-	public void setMarqueur(int m){
-		marqueur = m;
-	}
-	
-	public int getMarqueur(){
-		return marqueur;
-	}
-	
-	public void setAdmissible(){
-		admissible = true;
-	}
-	
-	public boolean getAdmissible(){
-		return admissible;
-	}
+	private int marqueur = 0; 
+	private Vector<Integer> vecteurX = new Vector<Integer>(); //contient les abscisses des points passant par le bin d'une direction
+	private Vector<Integer> vecteurY = new Vector<Integer>(); //contient les ordonnées des points passant par le bin d'une direction	
 	
 	public Fraction(int n, int d){
 		numerateur=n;
@@ -34,8 +19,33 @@ public class Fraction implements Comparable {
 	public int getDen(){
 		return denominateur;
 	}
+	
+	public void setVecteurX (Vector<Integer> m){
+		vecteurX = m;
+	}
+	
+	public void setVecteurY(Vector<Integer> m){
+		vecteurY = m;
+	}
 		
-	public boolean testFarey(int ordre){
+	public Vector<Integer> getVecteurX(){
+		return vecteurX;
+	}
+	
+	public Vector<Integer> getVecteurY(){
+		return vecteurY;
+	}	
+	
+	public void setMarqueur(int m){ 
+		marqueur = m;
+	}
+	
+	public int getMarqueur(){
+		return marqueur;
+	}
+	
+		
+	public boolean testFarey(int ordre){ // on rajoute la fraction à la suite de farey d'ordre n si son denominateur est inférieur à l'ordre
 		if (denominateur<=ordre) return true;
 		else return false;
 	}
@@ -49,7 +59,7 @@ public class Fraction implements Comparable {
 	public void affiche(){
 		System.out.println("(" + denominateur + "," + numerateur + ")");}
 	
-	public boolean appartientSuite(Vector<Fraction> v){
+	public boolean appartientSuite(Vector<Fraction> v){ //retourne vrai si la fraction appartient au vecteur de fraction v
 		boolean resultat=false;
 		for (Fraction f:v){
 			if(f.compareTo(this) == 0)
@@ -58,14 +68,14 @@ public class Fraction implements Comparable {
 		return resultat;
 	}
 	
-	public boolean testVoisin(Fraction fraction, Vector<Fraction> v){
+	public boolean testVoisin(Fraction f1, Vector<Fraction> v){ //retourne vrai si la fraction "this" est voisine à la fraction f1 dans le vecteur de fraction v
 		boolean resultat = false;
 		int index = 0;
 		int index2 = 0;
 		for(Fraction f:v){
 			if(f.compareTo(this) == 0)
 				index = v.indexOf(f);
-			if(f.compareTo(fraction) == 0)
+			if(f.compareTo(f1) == 0)
 				index2 = v.indexOf(f); 
 		}
 		if ((index-index2==1)||(index-index2==-1))
@@ -74,7 +84,7 @@ public class Fraction implements Comparable {
 		return resultat;
 	}
 	
-	public Fraction getVoisin(int n, Vector<Fraction> v){
+	public Fraction getVoisin(int n, Vector<Fraction> v){ // renvoie la fraction décalée de n indices de la fraction "this" dans le vecteur de fraction v
 		Fraction nul = new Fraction(0,0);
 		Fraction resultat = nul;
 		for (Fraction f:v){
@@ -86,7 +96,7 @@ public class Fraction implements Comparable {
 			return resultat;
 	}
 	
-	public static void appliquerMarquage(Vector<Fraction> vFarey, Vector<Fraction> vRetenue){
+	public static void appliquerMarquage(Vector<Fraction> vFarey, Vector<Fraction> vRetenue){ // si les fractions de vRetenue se suivent dans le vecteur de fraction vFarey, elles ont le même marquage
 		int size = vRetenue.size();
 		vRetenue.elementAt(0).setMarqueur(1);
 		for(int i=1; i<size; i++){

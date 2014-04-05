@@ -7,11 +7,13 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-public class Image {
+//pour transformer une image en matrice binaire, on charge l'image, puis on la binarise, puis on prend sa matrice
+
+public class Image { 
 BufferedImage image;
 int[][] matrice;
 
-public Image(String url) throws IOException{
+public Image(String url) throws IOException{ 
 	image = ImageIO.read(new File(url));
 	binariser();
 	convert();

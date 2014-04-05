@@ -3,15 +3,19 @@ private int length;
 private int height;
 private int grillePixel[][];
 
+// avant d'appliquer la projection mojette à la matrice binaire, il faut effectuer une opération sur elle 
+// afin d'avoir le coin en bas à gauche de l'image comme coordonnée (0,0)
+// cette opération est dans la méthode inverserMatrice()
+
 Pixel(int grillePixel[][]){
 	this.grillePixel = grillePixel.clone();
 	this.height = grillePixel[0].length;
 	this.length = grillePixel.length;
-	inverserMatrice();
+	opérationMatrice();
 	//afficherMatrice();
 }
 
-public void inverserMatrice(){
+public void opérationMatrice(){
 	int [][] matriceInverse= new int [height][length];
 	for(int i=0; i<height;i++){
 		for(int j=0; j<length;j++){
@@ -29,11 +33,11 @@ public void inverserMatrice(){
 
 public void afficherMatrice(){
 System.out.println("La matrice a pour hauteur "+height+ " et pour largeur " +length);
-/*for (int u=0; u<grillePixel.length; u++){
+for (int u=0; u<grillePixel.length; u++){
     for (int j=0; j<grillePixel[0].length; j++){        	
        System.out.print(grillePixel[u][j]);
        System.out.print(" ");}
-       System.out.print("\n");}*/
+       System.out.print("\n");}
 }
 
 public int getLength(){

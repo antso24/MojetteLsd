@@ -3,7 +3,7 @@ import java.util.Vector;
 
 public class Farey {
 	private int ordre;
-	private Vector<Fraction> suite_farey = new Vector<Fraction>();
+	private Vector<Fraction> suite_farey = new Vector<Fraction>(); // contient les fractions de la suite de farey
 	
 	public Farey(int n){
 		ordre=n;
